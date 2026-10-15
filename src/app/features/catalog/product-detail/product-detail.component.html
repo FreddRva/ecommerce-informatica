@@ -1,102 +1,187 @@
 @if (product(); as prod) {
-<div class="space-y-12 py-4">
-  <!-- Breadcrumb -->
-  <div class="flex items-center gap-2 text-xs text-slate-400">
-    <a routerLink="/" class="hover:text-cyan-400">Inicio</a>
-    <span>/</span>
-    <a routerLink="/catalogo" class="hover:text-cyan-400">Catálogo</a>
-    <span>/</span>
-    <span class="text-slate-200 truncate">{{ prod.name }}</span>
-  </div>
-
-  <!-- Top Showcase -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-    <!-- Image gallery -->
-    <div class="glass-panel p-4 rounded-3xl border border-slate-800 flex items-center justify-center">
-      <img [src]="prod.images[0]" [alt]="prod.name" class="w-full max-h-[420px] object-contain rounded-2xl" />
+  <div class="space-y-12 py-4">
+    <div class="flex items-center gap-2 text-xs text-slate-400">
+      <a routerLink="/" class="hover:text-cyan-400">Inicio</a>
+      <span>/</span>
+      <a routerLink="/catalogo" class="hover:text-cyan-400">Catálogo</a>
+      <span>/</span>
+      <span class="text-slate-200 truncate">{{ prod.name }}</span>
     </div>
 
-    <!-- Product Info & Purchase (HU-08, HU-12, HU-16, HU-37) -->
-    <div class="space-y-6 flex flex-col justify-between">
-      <div class="space-y-3">
-        <div class="flex items-center justify-between">
-          <span class="px-2.5 py-1 rounded-md bg-cyan-950 text-cyan-400 border border-cyan-800 text-xs font-mono uppercase">{{ prod.brand }}</span>
-          <div class="flex items-center gap-2">
-            <span [class]="prod.stock > 0 ? 'text-emerald-400 bg-emerald-950/60 border-emerald-800' : 'text-rose-400 bg-rose-950/60 border-rose-800'" class="px-2.5 py-0.5 rounded-full border text-[11px] font-semibold">
-              {{ prod.stock > 0 ? 'En Stock (' + prod.stock + ' un.)' : 'Agotado' }}
-            </span>
-          </div>
-        </div>
-
-        <h1 class="text-3xl font-black text-white font-display leading-tight">{{ prod.name }}</h1>
-        <app-star-rating [value]="prod.rating" [count]="prod.reviewsCount"></app-star-rating>
-        <p class="text-sm text-slate-300 leading-relaxed">{{ prod.description }}</p>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+      <div
+        class="glass-panel p-4 rounded-3xl border border-slate-800 flex items-center justify-center"
+      >
+        <img
+          [src]="prod.images[0]"
+          [alt]="prod.name"
+          class="w-full max-h-[420px] object-contain rounded-2xl"
+        />
       </div>
 
-      <div class="p-6 rounded-2xl glass-panel border border-slate-800/80 space-y-4">
-        <div class="flex items-baseline gap-3">
-          <span class="text-3xl font-black font-mono text-cyan-400">${{ prod.price | number:'1.2-2' }}</span>
-          @if (prod.originalPrice) {
-            <span class="text-sm font-mono text-slate-500 line-through">${{ prod.originalPrice | number:'1.2-2' }}</span>
+      <div class="space-y-6 flex flex-col justify-between">
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span
+              class="px-2.5 py-1 rounded-md bg-cyan-950 text-cyan-400 border border-cyan-800 text-xs font-mono uppercase"
+              >{{ prod.brand }}</span
+            >
+            <div class="flex items-center gap-2">
+              <span
+                [class]="
+                  prod.stock > 0
+                    ? 'text-emerald-400 bg-emerald-950/60 border-emerald-800'
+                    : 'text-rose-400 bg-rose-950/60 border-rose-800'
+                "
+                class="px-2.5 py-0.5 rounded-full border text-[11px] font-semibold"
+              >
+                {{ prod.stock > 0 ? 'En Stock (' + prod.stock + ' un.)' : 'Agotado' }}
+              </span>
+            </div>
+          </div>
+
+          <h1 class="text-3xl font-black text-white font-display leading-tight">{{ prod.name }}</h1>
+          <app-star-rating [value]="prod.rating" [count]="prod.reviewsCount"></app-star-rating>
+          <p class="text-sm text-slate-300 leading-relaxed">{{ prod.description }}</p>
+        </div>
+
+        <div class="p-6 rounded-2xl glass-panel border border-slate-800/80 space-y-4">
+          <div class="flex items-baseline gap-3">
+            <span class="text-3xl font-black font-mono text-cyan-400"
+              >${{ prod.price | number: '1.2-2' }}</span
+            >
+            @if (prod.originalPrice) {
+              <span class="text-sm font-mono text-slate-500 line-through"
+                >${{ prod.originalPrice | number: '1.2-2' }}</span
+              >
+            }
+          </div>
+
+          <div class="flex items-center gap-4">
+            <div class="flex items-center bg-slate-900 border border-slate-700 rounded-xl px-2">
+              <button
+                (click)="selectedQty.set(selectedQty() > 1 ? selectedQty() - 1 : 1)"
+                class="p-2 text-slate-400 hover:text-white"
+              >
+                -
+              </button>
+              <span class="px-4 text-sm font-bold font-mono text-white">{{ selectedQty() }}</span>
+              <button
+                (click)="
+                  selectedQty.set(selectedQty() < prod.stock ? selectedQty() + 1 : selectedQty())
+                "
+                class="p-2 text-slate-400 hover:text-white"
+              >
+                +
+              </button>
+            </div>
+            <button
+              (click)="addToCart()"
+              [disabled]="prod.stock <= 0"
+              class="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-sm shadow-lg shadow-cyan-500/20 disabled:opacity-40 cursor-pointer flex items-center justify-center gap-2"
+            >
+              <mat-icon class="!text-20px">add_shopping_cart</mat-icon> Agregar al Carrito
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-6">
+      <div class="flex border-b border-slate-800 gap-6 text-sm font-semibold">
+        <button
+          (click)="activeTab.set('specs')"
+          [class.text-cyan-400]="activeTab() === 'specs'"
+          [class.border-b-2]="activeTab() === 'specs'"
+          [class.border-cyan-400]="activeTab() === 'specs'"
+          class="pb-3 cursor-pointer"
+        >
+          Especificaciones Técnicas
+        </button>
+        <button
+          (click)="activeTab.set('reviews')"
+          [class.text-cyan-400]="activeTab() === 'reviews'"
+          [class.border-b-2]="activeTab() === 'reviews'"
+          [class.border-cyan-400]="activeTab() === 'reviews'"
+          class="pb-3 cursor-pointer"
+        >
+          Opiniones ({{ reviews.length }})
+        </button>
+        <button
+          (click)="activeTab.set('inquiry')"
+          [class.text-cyan-400]="activeTab() === 'inquiry'"
+          [class.border-b-2]="activeTab() === 'inquiry'"
+          [class.border-cyan-400]="activeTab() === 'inquiry'"
+          class="pb-3 cursor-pointer"
+        >
+          Hacer una Consulta
+        </button>
+      </div>
+
+      @if (activeTab() === 'specs') {
+        <div class="glass-panel p-6 rounded-2xl grid grid-cols-1 md:grid-cols-2 gap-4">
+          @for (entry of specEntries; track entry[0]) {
+            <div
+              class="p-3 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center text-xs"
+            >
+              <span class="text-slate-400 font-mono">{{ entry[0] }}</span>
+              <span class="text-white font-semibold text-right">{{ entry[1] }}</span>
+            </div>
           }
         </div>
-
-        <!-- Quantity Stepper & Add to Cart (HU-16) -->
-        <div class="flex items-center gap-4">
-          <div class="flex items-center bg-slate-900 border border-slate-700 rounded-xl px-2">
-            <button (click)="selectedQty.set(selectedQty() > 1 ? selectedQty() - 1 : 1)" class="p-2 text-slate-400 hover:text-white">-</button>
-            <span class="px-4 text-sm font-bold font-mono text-white">{{ selectedQty() }}</span>
-            <button (click)="selectedQty.set(selectedQty() < prod.stock ? selectedQty() + 1 : selectedQty())" class="p-2 text-slate-400 hover:text-white">+</button>
+      } @else if (activeTab() === 'reviews') {
+        <div class="space-y-6">
+          <div class="glass-panel p-6 rounded-2xl space-y-4">
+            <h4 class="text-sm font-bold text-white">Deja tu valoración (HU-49)</h4>
+            <app-star-rating
+              [value]="newRating()"
+              [readonly]="false"
+              (ratingChange)="newRating.set($event)"
+            ></app-star-rating>
+            <textarea
+              [(ngModel)]="newComment"
+              placeholder="Describe tu experiencia con este equipo informático..."
+              rows="2"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+            ></textarea>
+            <button
+              (click)="submitReview()"
+              class="px-5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold cursor-pointer"
+            >
+              Publicar Valoración
+            </button>
           </div>
-          <button (click)="addToCart()" [disabled]="prod.stock <= 0" class="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-sm shadow-lg shadow-cyan-500/20 disabled:opacity-40 cursor-pointer flex items-center justify-center gap-2">
-            <mat-icon class="!text-20px">add_shopping_cart</mat-icon> Agregar al Carrito
+          @for (r of reviews; track r.id) {
+            <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-white">{{ r.userName }}</span
+                ><app-star-rating [value]="r.rating"></app-star-rating>
+              </div>
+              <p class="text-xs text-slate-300">{{ r.comment }}</p>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="glass-panel p-6 rounded-2xl space-y-4 max-w-lg">
+          <h4 class="text-sm font-bold text-white">
+            Consulta técnica sobre {{ prod.name }} (HU-48)
+          </h4>
+          <textarea
+            [(ngModel)]="inquiryMessage"
+            placeholder="¿Tienes dudas sobre compatibilidad de componentes o fuente recomendada? Escríbenos..."
+            rows="3"
+            class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+          ></textarea>
+          <button
+            (click)="submitInquiry()"
+            class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-bold cursor-pointer"
+          >
+            Enviar Consulta
           </button>
         </div>
-      </div>
+      }
     </div>
   </div>
-
-  <!-- Tabs: Specifications, Reviews, Inquiries (HU-08, HU-48, HU-49, HU-50) -->
-  <div class="space-y-6">
-    <div class="flex border-b border-slate-800 gap-6 text-sm font-semibold">
-      <button (click)="activeTab.set('specs')" [class.text-cyan-400]="activeTab() === 'specs'" [class.border-b-2]="activeTab() === 'specs'" [class.border-cyan-400]="activeTab() === 'specs'" class="pb-3 cursor-pointer">Especificaciones Técnicas</button>
-      <button (click)="activeTab.set('reviews')" [class.text-cyan-400]="activeTab() === 'reviews'" [class.border-b-2]="activeTab() === 'reviews'" [class.border-cyan-400]="activeTab() === 'reviews'" class="pb-3 cursor-pointer">Opiniones ({{ reviews.length }})</button>
-      <button (click)="activeTab.set('inquiry')" [class.text-cyan-400]="activeTab() === 'inquiry'" [class.border-b-2]="activeTab() === 'inquiry'" [class.border-cyan-400]="activeTab() === 'inquiry'" class="pb-3 cursor-pointer">Hacer una Consulta</button>
-    </div>
-
-    @if (activeTab() === 'specs') {
-      <div class="glass-panel p-6 rounded-2xl grid grid-cols-1 md:grid-cols-2 gap-4">
-        @for (entry of specEntries; track entry[0]) {
-          <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800 flex justify-between items-center text-xs">
-            <span class="text-slate-400 font-mono">{{ entry[0] }}</span>
-            <span class="text-white font-semibold text-right">{{ entry[1] }}</span>
-          </div>
-        }
-      </div>
-    } @else if (activeTab() === 'reviews') {
-      <div class="space-y-6">
-        <div class="glass-panel p-6 rounded-2xl space-y-4">
-          <h4 class="text-sm font-bold text-white">Deja tu valoración (HU-49)</h4>
-          <app-star-rating [value]="newRating()" [readonly]="false" (ratingChange)="newRating.set($event)"></app-star-rating>
-          <textarea [(ngModel)]="newComment" placeholder="Describe tu experiencia con este equipo informático..." rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"></textarea>
-          <button (click)="submitReview()" class="px-5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold cursor-pointer">Publicar Valoración</button>
-        </div>
-        @for (r of reviews; track r.id) {
-          <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
-            <div class="flex items-center justify-between"><span class="text-xs font-bold text-white">{{ r.userName }}</span><app-star-rating [value]="r.rating"></app-star-rating></div>
-            <p class="text-xs text-slate-300">{{ r.comment }}</p>
-          </div>
-        }
-      </div>
-    } @else {
-      <div class="glass-panel p-6 rounded-2xl space-y-4 max-w-lg">
-        <h4 class="text-sm font-bold text-white">Consulta técnica sobre {{ prod.name }} (HU-48)</h4>
-        <textarea [(ngModel)]="inquiryMessage" placeholder="¿Tienes dudas sobre compatibilidad de componentes o fuente recomendada? Escríbenos..." rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"></textarea>
-        <button (click)="submitInquiry()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-bold cursor-pointer">Enviar Consulta</button>
-      </div>
-    }
-  </div>
-</div>
 } @else {
   <div class="text-center py-20"><p class="text-slate-400">Producto no encontrado</p></div>
 }

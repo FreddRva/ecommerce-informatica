@@ -5,35 +5,57 @@
         <h1 class="text-2xl font-black text-white font-display">Mi Cuenta</h1>
         <p class="text-xs text-slate-400">Actualiza tus datos personales y direcciones de envío</p>
       </div>
-      <span class="px-3 py-1 rounded-full text-xs font-mono uppercase bg-cyan-950 text-cyan-400 border border-cyan-800">
+      <span
+        class="px-3 py-1 rounded-full text-xs font-mono uppercase bg-cyan-950 text-cyan-400 border border-cyan-800"
+      >
         Rol: {{ user()?.role }}
       </span>
     </div>
 
-    <!-- Edit Profile Form (HU-04) -->
     <div class="space-y-4 text-xs">
       <div>
         <label class="text-slate-400">Correo Electrónico (No editable)</label>
-        <input [value]="user()?.email" disabled class="w-full bg-slate-900/50 border border-slate-800 rounded-xl p-3 text-slate-500 mt-1 cursor-not-allowed font-mono" />
+        <input
+          [value]="user()?.email"
+          disabled
+          class="w-full bg-slate-900/50 border border-slate-800 rounded-xl p-3 text-slate-500 mt-1 cursor-not-allowed font-mono"
+        />
       </div>
       <div>
         <label class="text-slate-400">Nombre Completo</label>
-        <input [(ngModel)]="fullName" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white mt-1 focus:border-cyan-500 focus:outline-none" />
+        <input
+          [(ngModel)]="fullName"
+          class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white mt-1 focus:border-cyan-500 focus:outline-none"
+        />
       </div>
       <div>
         <label class="text-slate-400">Teléfono de Contacto</label>
-        <input [(ngModel)]="phone" placeholder="+57 300 000 0000" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white mt-1 focus:border-cyan-500 focus:outline-none" />
+        <input
+          [(ngModel)]="phone"
+          placeholder="+57 300 000 0000"
+          class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white mt-1 focus:border-cyan-500 focus:outline-none"
+        />
       </div>
       <div>
         <label class="text-slate-400">Dirección de Despacho Habitual</label>
-        <input [(ngModel)]="address" placeholder="Calle / Carrera / Edificio" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white mt-1 focus:border-cyan-500 focus:outline-none" />
+        <input
+          [(ngModel)]="address"
+          placeholder="Calle / Carrera / Edificio"
+          class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white mt-1 focus:border-cyan-500 focus:outline-none"
+        />
       </div>
 
       <div class="flex gap-3 pt-3">
-        <button (click)="saveProfile()" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold cursor-pointer">
+        <button
+          (click)="saveProfile()"
+          class="flex-1 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold cursor-pointer"
+        >
           Guardar Cambios
         </button>
-        <button (click)="logout()" class="px-5 py-3 rounded-xl bg-rose-950 text-rose-300 border border-rose-800 hover:bg-rose-900 cursor-pointer flex items-center gap-1.5 font-semibold">
+        <button
+          (click)="logout()"
+          class="px-5 py-3 rounded-xl bg-rose-950 text-rose-300 border border-rose-800 hover:bg-rose-900 cursor-pointer flex items-center gap-1.5 font-semibold"
+        >
           <mat-icon class="!text-16px">logout</mat-icon> Salir
         </button>
       </div>

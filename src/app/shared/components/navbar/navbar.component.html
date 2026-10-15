@@ -1,6 +1,5 @@
 <header class="sticky top-0 z-50 glass-panel border-b border-slate-800/80">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
-    <!-- Logo -->
     <a routerLink="/" class="flex items-center gap-3 group">
       <div
         class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform"
@@ -12,15 +11,10 @@
           class="text-xl font-black tracking-tight text-white flex items-center gap-1 font-display"
         >
           CYBER<span class="text-cyan-400">TECH</span>
-          <span
-            class="text-[10px] uppercase tracking-widest px-1.5 py-0.5 rounded bg-cyan-950 border border-cyan-800 text-cyan-400 font-mono"
-            >Pro</span
-          >
         </span>
       </div>
     </a>
 
-    <!-- Search Input (HU-10) -->
     <div class="hidden md:flex flex-1 max-w-md mx-4">
       <div class="relative w-full">
         <input
@@ -43,7 +37,6 @@
       </div>
     </div>
 
-    <!-- Nav Links -->
     <nav class="hidden lg:flex items-center gap-6 text-sm font-medium text-slate-300">
       <a
         routerLink="/catalogo"
@@ -77,9 +70,7 @@
       }
     </nav>
 
-    <!-- Actions (Cart, User, Mobile menu) -->
     <div class="flex items-center gap-3">
-      <!-- Cart Button (HU-16, HU-19) -->
       <a
         routerLink="/carrito"
         class="relative p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-200 hover:text-cyan-400 hover:border-cyan-500/40 transition-all flex items-center justify-center"
@@ -94,7 +85,6 @@
         }
       </a>
 
-      <!-- User Menu (HU-02, HU-04, HU-05, HU-06) -->
       @if (authService.isAuthenticated()) {
         <button
           [matMenuTriggerFor]="userMenu"

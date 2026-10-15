@@ -56,7 +56,7 @@ export class CheckoutComponent {
 
     let stripeId: string | undefined;
     if (this.paymentMethod() === 'stripe') {
-      const result = await this.stripeService.processPayment(this.cartService.total(), this.cardDetails);
+      const result = await this.stripeService.processPayment(this.cartService.total(), this.cardDetails, this.address.email);
       if (!result.success) {
         this.isProcessing.set(false);
         return;

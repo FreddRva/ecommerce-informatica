@@ -7,7 +7,7 @@ export const environment = {
   storeName: 'CyberTech Pro',
   currency: 'USD',
   symbol: '$',
-  supportEmail: 'soporte@cybertechpro.com',
-  supportPhone: '+57 300 123 4567',
+  supportEmail: 'soporte@cybertech.com',
+  supportPhone: '+51 987654321',
   supportAddress: 'Av. Tecnología #100-24, Centro Digital',
 };
