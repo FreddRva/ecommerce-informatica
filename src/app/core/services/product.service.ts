@@ -1,7 +1,6 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { Product, ProductFilter } from '../models/product.model';
 import { Category } from '../models/category.model';
-import { INITIAL_PRODUCTS } from './product-data';
 import { INITIAL_CATEGORIES } from './category-data';
 import { SupabaseService } from './supabase.service';
 import { NotificationService } from './notification.service';
@@ -12,7 +11,8 @@ export class ProductService {
   private supabase = inject(SupabaseService);
   private notify = inject(NotificationService);
 
-  private productsState = signal<Product[]>(INITIAL_PRODUCTS);
+  private productsState = signal<Product[]>([]);
+
   categories = signal<Category[]>(INITIAL_CATEGORIES);
   filter = signal<ProductFilter>({ categoryId: 'cat-all', sortBy: 'popularity' });
 
@@ -44,7 +44,15 @@ export class ProductService {
     if (!this.supabase.isConfigured() || !this.supabase.client) return;
     const { data } = await this.supabase.client.from('products').select('*');
     if (data?.length) this.productsState.set(data.map(mapSupabaseToProduct));
+    const { data: cats } = await this.supabase.client.from('categories').select('*');
+    if (cats?.length) {
+      this.categories.set([
+        { id: 'cat-all', name: 'Todos los Equipos', slug: 'all', icon: 'devices', isActive: true },
+        ...cats.map((c: any) => ({ id: c.id, name: c.name, slug: c.slug, icon: c.icon, isActive: c.is_active }))
+      ]);
+    }
   }
+
 
   getProductById(id: string): Product | undefined {
     return this.productsState().find(p => p.id === id);

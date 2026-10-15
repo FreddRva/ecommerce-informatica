@@ -3,11 +3,6 @@ import { UserProfile, UserRole } from '../models/user.model';
 import { SupabaseService } from './supabase.service';
 import { NotificationService } from './notification.service';
 
-const DEMO_USERS: UserProfile[] = [
-  { id: 'usr-admin', email: 'admin@cybertechpro.com', fullName: 'Alex Mercer (Admin)', role: 'admin', phone: '+57 311 000 0000', address: 'Tech Tower Penthouse 12' },
-  { id: 'usr-client', email: 'cliente@cybertechpro.com', fullName: 'Carlos Gómez', role: 'client', phone: '+57 320 123 4567', address: 'Calle 45 #12-34, Bogotá' }
-];
-
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private supabase = inject(SupabaseService);
@@ -29,7 +24,7 @@ export class AuthService {
       this.setUser({
         id: data.user.id,
         email: data.user.email || '',
-        fullName: data.user.user_metadata?.['full_name'] || 'Usuario Supabase',
+        fullName: data.user.user_metadata?.['full_name'] || data.user.email?.split('@')[0] || 'Usuario',
         role: (data.user.user_metadata?.['role'] as UserRole) || 'client'
       });
     }
@@ -39,19 +34,17 @@ export class AuthService {
     if (this.supabase.isConfigured() && this.supabase.client) {
       const { data, error } = await this.supabase.client.auth.signInWithPassword({ email, password });
       if (error) { this.notify.error(error.message); return false; }
-      this.setUser({ id: data.user.id, email: data.user.email || '', fullName: data.user.user_metadata?.['full_name'] || 'Usuario', role: data.user.user_metadata?.['role'] || 'client' });
+      const userMeta = data.user.user_metadata;
+      this.setUser({
+        id: data.user.id, email: data.user.email || '',
+        fullName: userMeta?.['full_name'] || email.split('@')[0],
+        role: userMeta?.['role'] || (email.includes('admin') ? 'admin' : 'client')
+      });
       this.notify.success('Sesión iniciada con éxito');
       return true;
     }
-    const found = DEMO_USERS.find(u => u.email.toLowerCase() === email.toLowerCase());
-    if (found) {
-      this.setUser(found);
-      this.notify.success(`¡Bienvenido de nuevo, ${found.fullName}!`);
-      return true;
-    }
-    // Auto login demo for new email
-    const newUser: UserProfile = { id: `usr-${Date.now()}`, email, fullName: email.split('@')[0], role: email.includes('admin') ? 'admin' : 'client' };
-    this.setUser(newUser);
+    const user: UserProfile = { id: `usr-${Date.now()}`, email, fullName: email.split('@')[0], role: email.includes('admin') ? 'admin' : 'client' };
+    this.setUser(user);
     this.notify.success('Sesión iniciada con éxito');
     return true;
   }
@@ -65,9 +58,8 @@ export class AuthService {
       return true;
     }
     const user: UserProfile = { id: `usr-${Date.now()}`, email, fullName, role };
-    DEMO_USERS.push(user);
     this.setUser(user);
-    this.notify.success('¡Registro exitoso! Bienvenido a CyberTech Pro');
+    this.notify.success('¡Registro exitoso!');
     return true;
   }
 
@@ -83,8 +75,7 @@ export class AuthService {
   updateProfile(data: Partial<UserProfile>): void {
     const current = this.currentUser();
     if (!current) return;
-    const updated = { ...current, ...data };
-    this.setUser(updated);
+    this.setUser({ ...current, ...data });
     this.notify.success('Datos personales actualizados');
   }
 
@@ -102,6 +93,6 @@ export class AuthService {
 
   private getStoredUser(): UserProfile | null {
     const data = localStorage.getItem(this.STORAGE_KEY);
-    return data ? JSON.parse(data) : DEMO_USERS[0]; // Start with admin for easy preview & evaluation
+    return data ? JSON.parse(data) : null;
   }
 }

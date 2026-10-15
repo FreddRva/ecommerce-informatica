@@ -4,7 +4,6 @@ import { ProductService } from './product.service';
 import { CartService } from './cart.service';
 import { SupabaseService } from './supabase.service';
 import { NotificationService } from './notification.service';
-import { INITIAL_ORDERS } from './order-data';
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
@@ -13,8 +12,28 @@ export class OrderService {
   private supabase = inject(SupabaseService);
   private notify = inject(NotificationService);
 
-  private ordersState = signal<Order[]>(INITIAL_ORDERS);
+  private ordersState = signal<Order[]>([]);
+
   allOrders = computed(() => this.ordersState());
+
+  constructor() {
+    this.loadOrdersFromSupabase();
+  }
+
+  private async loadOrdersFromSupabase() {
+    if (!this.supabase.isConfigured() || !this.supabase.client) return;
+    const { data } = await this.supabase.client.from('orders').select('*');
+    if (data?.length) {
+      this.ordersState.set(data.map((o: any) => ({
+        id: o.id, orderNumber: o.order_number, userName: o.user_name, userEmail: o.user_email,
+        status: o.status, subtotal: Number(o.subtotal), discount: Number(o.discount || 0),
+        shippingCost: Number(o.shipping_cost || 0), total: Number(o.total),
+        shippingAddress: o.shipping_address || {}, shippingMethod: o.shipping_method || 'standard',
+        paymentMethod: o.payment_method, paymentStatus: o.payment_status,
+        stripePaymentId: o.stripe_payment_id, trackingNumber: o.tracking_number, items: o.items || [], createdAt: o.created_at
+      })));
+    }
+  }
 
   getOrdersByUser(email: string): Order[] {
     return this.ordersState().filter(o => o.userEmail.toLowerCase() === email.toLowerCase());
@@ -32,7 +51,6 @@ export class OrderService {
       trackingNumber: `TRK-${Math.floor(1000000 + Math.random() * 9000000)}-PRO`,
       createdAt: new Date().toISOString()
     };
-
     this.productService.reduceStockForOrder(newOrder.items.map(i => ({ productId: i.productId, quantity: i.quantity })));
     this.cartService.clearCart();
 
@@ -46,7 +64,6 @@ export class OrderService {
         tracking_number: newOrder.trackingNumber
       });
     }
-
     this.ordersState.update(list => [newOrder, ...list]);
     this.notify.success(`¡Pedido ${newOrder.orderNumber} registrado con éxito!`);
     return newOrder;

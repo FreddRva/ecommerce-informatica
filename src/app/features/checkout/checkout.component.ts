@@ -25,13 +25,13 @@ export class CheckoutComponent {
 
   user = this.authService.currentUser;
   address: ShippingAddress = {
-    fullName: this.user()?.fullName || 'Carlos Gómez',
-    email: this.user()?.email || 'cliente@cybertechpro.com',
-    phone: this.user()?.phone || '+57 320 123 4567',
-    addressLine: this.user()?.address || 'Calle 45 #12-34',
-    city: 'Bogotá',
-    state: 'Cundinamarca',
-    postalCode: '110111'
+    fullName: this.user()?.fullName || '',
+    email: this.user()?.email || '',
+    phone: this.user()?.phone || '',
+    addressLine: this.user()?.address || '',
+    city: '',
+    state: '',
+    postalCode: ''
   };
 
   shippingMethod = signal<ShippingMethod>('standard');
@@ -39,11 +39,12 @@ export class CheckoutComponent {
   isProcessing = signal(false);
 
   cardDetails: StripeCardDetails = {
-    cardNumber: '4242 4242 4242 4242',
-    cardHolder: this.user()?.fullName || 'CARLOS GOMEZ',
-    expiry: '12/28',
-    cvv: '123'
+    cardNumber: '',
+    cardHolder: '',
+    expiry: '',
+    cvv: ''
   };
+
 
   useStripeTestCard(): void {
     this.cardDetails = { cardNumber: '4242 4242 4242 4242', cardHolder: 'TEST STRIPE CARD', expiry: '08/29', cvv: '424' };

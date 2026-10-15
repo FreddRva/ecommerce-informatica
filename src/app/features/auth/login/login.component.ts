@@ -15,25 +15,16 @@ export class LoginComponent {
   authService = inject(AuthService);
   router = inject(Router);
 
-  email = signal('admin@cybertechpro.com');
-  password = signal('admin123');
+  email = signal('');
+  password = signal('');
   showRecovery = signal(false);
   recoveryEmail = signal('');
 
   async onLogin(): Promise<void> {
+    if (!this.email() || !this.password()) return;
     const success = await this.authService.login(this.email(), this.password());
     if (success) {
       this.router.navigate(['/']);
-    }
-  }
-
-  useDemoUser(role: 'admin' | 'client'): void {
-    if (role === 'admin') {
-      this.email.set('admin@cybertechpro.com');
-      this.password.set('admin123');
-    } else {
-      this.email.set('cliente@cybertechpro.com');
-      this.password.set('cliente123');
     }
   }
 

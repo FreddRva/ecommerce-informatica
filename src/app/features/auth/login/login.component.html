@@ -8,18 +8,6 @@
       <p class="text-xs text-slate-400">Accede a tu cuenta de CyberTech Pro</p>
     </div>
 
-    <!-- Quick Demo Accounts Switcher -->
-    <div class="p-3 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
-      <span class="text-[11px] font-mono text-slate-400 block text-center uppercase tracking-wider">Cuentas Rápidas de Prueba:</span>
-      <div class="flex gap-2">
-        <button (click)="useDemoUser('admin')" class="flex-1 py-1.5 rounded-lg bg-indigo-950 text-indigo-300 border border-indigo-800 text-[11px] font-semibold hover:bg-indigo-900 cursor-pointer">
-          👑 Admin Pro
-        </button>
-        <button (click)="useDemoUser('client')" class="flex-1 py-1.5 rounded-lg bg-cyan-950 text-cyan-300 border border-cyan-800 text-[11px] font-semibold hover:bg-cyan-900 cursor-pointer">
-          🛒 Cliente Demo
-        </button>
-      </div>
-    </div>
 
     @if (!showRecovery()) {
       <form (submit)="onLogin(); $event.preventDefault()" class="space-y-4 text-xs">

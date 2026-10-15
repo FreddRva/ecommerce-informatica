@@ -14,10 +14,16 @@ import { ProductService } from '../../../core/services/product.service';
   selector: 'app-navbar',
   standalone: true,
   imports: [
-    CommonModule, RouterLink, RouterLinkActive, FormsModule,
-    MatIconModule, MatButtonModule, MatBadgeModule, MatMenuModule
+    CommonModule,
+    RouterLink,
+    RouterLinkActive,
+    FormsModule,
+    MatIconModule,
+    MatButtonModule,
+    MatBadgeModule,
+    MatMenuModule,
   ],
-  templateUrl: './navbar.component.html'
+  templateUrl: './navbar.component.html',
 })
 export class NavbarComponent {
   authService = inject(AuthService);
@@ -37,7 +43,7 @@ export class NavbarComponent {
   }
 
   toggleMobileMenu(): void {
-    this.mobileMenuOpen.update(v => !v);
+    this.mobileMenuOpen.update((v) => !v);
   }
 
   logout(): void {
