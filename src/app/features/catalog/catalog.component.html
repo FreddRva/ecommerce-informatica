@@ -1,0 +1,89 @@
+<div class="space-y-8 py-4">
+  <!-- Page Header -->
+  <div class="border-b border-slate-800 pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-black text-white font-display">Catálogo de Equipos Informáticos</h1>
+      <p class="text-xs text-slate-400 mt-1">Explora nuestro hardware de alto rendimiento con inventario garantizado</p>
+    </div>
+
+    <!-- Active Filter Counter -->
+    <div class="flex items-center gap-3">
+      <span class="text-xs font-mono px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-cyan-400">
+        {{ products().length }} Equipos Encontrados
+      </span>
+      <button 
+        (click)="clearFilters()"
+        class="text-xs text-slate-400 hover:text-white flex items-center gap-1 cursor-pointer"
+      >
+        <mat-icon class="!text-16px">refresh</mat-icon> Restablecer
+      </button>
+    </div>
+  </div>
+
+  <!-- Category Pills (HU-09) -->
+  <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+    @for (cat of categories(); track cat.id) {
+      <button 
+        type="button"
+        (click)="onSelectCategory(cat.id)"
+        [class]="filter().categoryId === cat.id 
+          ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/20 border-cyan-400' 
+          : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border-slate-800'"
+        class="px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap border transition-all flex items-center gap-1.5 cursor-pointer"
+      >
+        <mat-icon class="!text-16px">{{ cat.icon || 'folder' }}</mat-icon>
+        <span>{{ cat.name }}</span>
+      </button>
+    }
+  </div>
+
+  <!-- Controls Bar: Sort, Stock toggle (HU-11, HU-37) -->
+  <div class="glass-panel p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4">
+    <div class="flex items-center gap-4 text-xs">
+      <label class="flex items-center gap-2 cursor-pointer text-slate-300 select-none">
+        <input 
+          type="checkbox" 
+          [checked]="filter().inStockOnly" 
+          (change)="onToggleStockOnly($any($event.target).checked)"
+          class="rounded bg-slate-800 border-slate-700 text-cyan-500 focus:ring-0 w-4 h-4"
+        />
+        <span>Solo productos en stock</span>
+      </label>
+    </div>
+
+    <!-- Sort Dropdown (HU-11) -->
+    <div class="flex items-center gap-2 text-xs">
+      <span class="text-slate-400 font-medium">Ordenar por:</span>
+      <select 
+        [ngModel]="filter().sortBy" 
+        (ngModelChange)="onSortChange($event)"
+        class="bg-slate-900 border border-slate-700 text-slate-200 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-cyan-500 cursor-pointer"
+      >
+        <option value="popularity">Más Populares / Valorados</option>
+        <option value="price-asc">Precio: Menor a Mayor</option>
+        <option value="price-desc">Precio: Mayor a Menor</option>
+        <option value="newest">Más Recientes</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Products Grid (HU-07, HU-12) -->
+  @if (products().length > 0) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      @for (prod of products(); track prod.id) {
+        <app-product-card [product]="prod"></app-product-card>
+      }
+    </div>
+  } @else {
+    <div class="text-center py-16 glass-panel rounded-3xl border border-slate-800 space-y-4">
+      <mat-icon class="!text-48px text-slate-600">search_off</mat-icon>
+      <h3 class="text-lg font-bold text-white">No se encontraron productos</h3>
+      <p class="text-xs text-slate-400 max-w-sm mx-auto">
+        Intenta cambiando el término de búsqueda o seleccionando otra categoría en el menú superior.
+      </p>
+      <button (click)="clearFilters()" class="px-5 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold cursor-pointer">
+        Ver todo el catálogo
+      </button>
+    </div>
+  }
+</div>

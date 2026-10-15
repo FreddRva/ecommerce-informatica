@@ -1,0 +1,52 @@
+<div class="py-10 max-w-md mx-auto space-y-6">
+  <div class="glass-panel p-8 rounded-3xl border border-slate-800 space-y-6">
+    <div class="text-center space-y-2">
+      <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 text-cyan-400 mx-auto flex items-center justify-center border border-cyan-500/30">
+        <mat-icon class="!text-24px">person_add</mat-icon>
+      </div>
+      <h1 class="text-2xl font-black text-white font-display">Crear Cuenta</h1>
+      <p class="text-xs text-slate-400">Únete a la tienda de hardware líder</p>
+    </div>
+
+    <form (submit)="onRegister(); $event.preventDefault()" class="space-y-4 text-xs">
+      <div>
+        <label class="text-slate-400">Nombre Completo</label>
+        <input [(ngModel)]="fullName" name="fullName" required placeholder="Ej: Santiago Ortiz" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white mt-1 focus:border-cyan-500 focus:outline-none" />
+      </div>
+      <div>
+        <label class="text-slate-400">Correo Electrónico</label>
+        <input [(ngModel)]="email" name="email" type="email" required placeholder="tu@correo.com" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white mt-1 focus:border-cyan-500 focus:outline-none" />
+      </div>
+      <div>
+        <label class="text-slate-400">Contraseña Segura</label>
+        <input [(ngModel)]="password" name="password" type="password" required placeholder="Mínimo 6 caracteres" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white mt-1 focus:border-cyan-500 focus:outline-none" />
+      </div>
+      <div>
+        <label class="text-slate-400">Teléfono Móvil</label>
+        <input [(ngModel)]="phone" name="phone" placeholder="+57 300 000 0000" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white mt-1 focus:border-cyan-500 focus:outline-none" />
+      </div>
+
+      <!-- Role Selector (HU-06) -->
+      <div>
+        <label class="text-slate-400 block mb-1">Tipo de Cuenta (Permisos)</label>
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" (click)="role.set('client')" [class.border-cyan-500]="role() === 'client'" [class.bg-cyan-950]="role() === 'client'" class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white font-medium cursor-pointer">
+            🛒 Cliente Comprador
+          </button>
+          <button type="button" (click)="role.set('admin')" [class.border-indigo-500]="role() === 'admin'" [class.bg-indigo-950]="role() === 'admin'" class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white font-medium cursor-pointer">
+            👑 Administrador
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-xs shadow-lg shadow-cyan-500/20 cursor-pointer">
+        Registrarme y Comenzar
+      </button>
+    </form>
+
+    <div class="text-center text-xs text-slate-400 border-t border-slate-800 pt-4">
+      ¿Ya tienes una cuenta?
+      <a routerLink="/auth/login" class="text-cyan-400 font-bold hover:underline ml-1">Inicia sesión</a>
+    </div>
+  </div>
+</div>

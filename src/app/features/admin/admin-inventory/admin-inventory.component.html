@@ -1,0 +1,70 @@
+<div class="space-y-6">
+  <div>
+    <h2 class="text-xl font-bold text-white">Control de Inventario y Almacén</h2>
+    <p class="text-xs text-slate-400">Control de existencias, reposición rápida y alertas automáticas de agotamiento (HU-34, HU-35, HU-36)</p>
+  </div>
+
+  <!-- Low Stock Warning Banner (HU-36) -->
+  @if (lowStockAlerts().length > 0) {
+    <div class="p-4 rounded-2xl bg-amber-950/40 border border-amber-600/40 text-amber-200 text-xs flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <mat-icon class="text-amber-400 !text-24px">warning</mat-icon>
+        <div>
+          <span class="font-bold">¡Atención de Reabastecimiento!</span>
+          <p class="text-[11px] text-amber-300">Hay {{ lowStockAlerts().length }} productos con stock crítico menor o igual al umbral mínimo.</p>
+        </div>
+      </div>
+      <span class="font-mono text-xs px-2.5 py-1 rounded bg-amber-900 border border-amber-600">Alerta Activa</span>
+    </div>
+  }
+
+  <!-- Stock Table (HU-34, HU-35) -->
+  <div class="glass-panel rounded-2xl overflow-hidden border border-slate-800">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs text-slate-300">
+        <thead class="bg-slate-900 text-slate-400 uppercase font-mono text-[10px] border-b border-slate-800">
+          <tr>
+            <th class="p-3.5">Equipo Informático</th>
+            <th class="p-3.5">Stock Actual</th>
+            <th class="p-3.5">Umbral Alerta</th>
+            <th class="p-3.5">Estado</th>
+            <th class="p-3.5 text-right">Ingreso Rápido de Lote (HU-35)</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-800">
+          @for (prod of products(); track prod.id) {
+            <tr class="hover:bg-slate-900/40">
+              <td class="p-3.5 flex items-center gap-3">
+                <img [src]="prod.images[0]" class="w-10 h-10 rounded-lg object-cover bg-slate-950 border border-slate-800" />
+                <div>
+                  <p class="font-bold text-white">{{ prod.name }}</p>
+                  <p class="text-[10px] text-slate-400 font-mono">{{ prod.brand }}</p>
+                </div>
+              </td>
+              <td class="p-3.5">
+                <div class="flex items-center gap-2">
+                  <input type="number" [value]="prod.stock" #stockInput (change)="setStock(prod.id, +stockInput.value)" class="w-16 bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-white font-mono text-center text-xs" />
+                  <span class="text-slate-500 font-mono text-[11px]">unidades</span>
+                </div>
+              </td>
+              <td class="p-3.5 font-mono text-slate-400">&le; {{ prod.minStockAlert }} un.</td>
+              <td class="p-3.5">
+                @if (prod.stock <= 0) {
+                  <span class="px-2 py-0.5 rounded-full bg-rose-950 text-rose-400 border border-rose-800 text-[10px]">Agotado</span>
+                } @else if (prod.stock <= prod.minStockAlert) {
+                  <span class="px-2 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-800 text-[10px] animate-pulse">Bajo Stock</span>
+                } @else {
+                  <span class="px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-800 text-[10px]">Óptimo</span>
+                }
+              </td>
+              <td class="p-3.5 text-right space-x-2">
+                <button (click)="quickAddStock(prod.id, prod.stock, 5)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 font-mono font-bold text-[11px] cursor-pointer">+5 un</button>
+                <button (click)="quickAddStock(prod.id, prod.stock, 20)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 font-mono font-bold text-[11px] cursor-pointer">+20 un</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

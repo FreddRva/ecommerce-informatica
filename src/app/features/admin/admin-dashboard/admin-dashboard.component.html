@@ -1,0 +1,92 @@
+<div class="py-6 space-y-8">
+  <div class="border-b border-slate-800 pb-4 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+    <div>
+      <h1 class="text-3xl font-black text-white font-display flex items-center gap-2">
+        <span class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white"><mat-icon class="!text-20px">admin_panel_settings</mat-icon></span>
+        Panel de Administración
+      </h1>
+      <p class="text-xs text-slate-400">Supervisión integral de ventas, inventario y catálogo (HU-42 a HU-46)</p>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="flex items-center gap-2 bg-slate-900 p-1.5 rounded-2xl border border-slate-800 text-xs font-semibold overflow-x-auto">
+      <button (click)="activeTab.set('overview')" [class.bg-indigo-600]="activeTab() === 'overview'" [class.text-white]="activeTab() === 'overview'" class="px-3.5 py-2 rounded-xl text-slate-300 hover:text-white cursor-pointer transition-all">Métricas</button>
+      <button (click)="activeTab.set('products')" [class.bg-indigo-600]="activeTab() === 'products'" [class.text-white]="activeTab() === 'products'" class="px-3.5 py-2 rounded-xl text-slate-300 hover:text-white cursor-pointer transition-all">Productos</button>
+      <button (click)="activeTab.set('orders')" [class.bg-indigo-600]="activeTab() === 'orders'" [class.text-white]="activeTab() === 'orders'" class="px-3.5 py-2 rounded-xl text-slate-300 hover:text-white cursor-pointer transition-all">Pedidos</button>
+      <button (click)="activeTab.set('inventory')" [class.bg-indigo-600]="activeTab() === 'inventory'" [class.text-white]="activeTab() === 'inventory'" class="px-3.5 py-2 rounded-xl text-slate-300 hover:text-white cursor-pointer transition-all">Inventario</button>
+      <button (click)="activeTab.set('coupons')" [class.bg-indigo-600]="activeTab() === 'coupons'" [class.text-white]="activeTab() === 'coupons'" class="px-3.5 py-2 rounded-xl text-slate-300 hover:text-white cursor-pointer transition-all">Cupones</button>
+    </div>
+  </div>
+
+  @if (activeTab() === 'overview') {
+    <!-- KPI Metrics (HU-42, HU-43) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-2">
+        <span class="text-xs text-slate-400 font-mono uppercase">Ventas Totales (Periodo)</span>
+        <div class="text-3xl font-black font-mono text-cyan-400">${{ totalSales() | number:'1.2-2' }}</div>
+        <p class="text-[11px] text-emerald-400 flex items-center gap-1"><mat-icon class="!text-14px">trending_up</mat-icon> +18.4% este mes</p>
+      </div>
+      <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-2">
+        <span class="text-xs text-slate-400 font-mono uppercase">Total Pedidos</span>
+        <div class="text-3xl font-black font-mono text-white">{{ totalOrders() }}</div>
+        <p class="text-[11px] text-slate-400">Procesados con Stripe & Supabase</p>
+      </div>
+      <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-2">
+        <span class="text-xs text-slate-400 font-mono uppercase">Catálogo Activo</span>
+        <div class="text-3xl font-black font-mono text-indigo-400">{{ totalProducts() }}</div>
+        <p class="text-[11px] text-slate-400">Equipos y componentes</p>
+      </div>
+      <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-2">
+        <span class="text-xs text-slate-400 font-mono uppercase">Alertas Stock Crítico</span>
+        <div class="text-3xl font-black font-mono text-amber-400">{{ lowStockCount() }}</div>
+        <p class="text-[11px] text-amber-300">Requieren reabastecimiento</p>
+      </div>
+    </div>
+
+    <!-- Top Products & Customer Inquiries (HU-44, HU-46) -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Best Sellers (HU-44) -->
+      <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
+        <h3 class="text-base font-bold text-white uppercase font-mono">Equipos Más Populares / Vendidos (HU-44)</h3>
+        <div class="space-y-3">
+          @for (tp of topProducts(); track tp.id) {
+            <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-900/60 border border-slate-800 text-xs">
+              <div class="flex items-center gap-3">
+                <img [src]="tp.images[0]" class="w-10 h-10 rounded-lg object-cover bg-slate-950" />
+                <div>
+                  <p class="font-bold text-white truncate max-w-[200px]">{{ tp.name }}</p>
+                  <p class="text-slate-400 font-mono">{{ tp.brand }} • Stock: {{ tp.stock }}</p>
+                </div>
+              </div>
+              <span class="font-mono text-cyan-400 font-bold">${{ tp.price | number:'1.2-2' }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Recent Customer Orders (HU-46) -->
+      <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
+        <h3 class="text-base font-bold text-white uppercase font-mono">Clientes y Compras Recientes (HU-46)</h3>
+        <div class="space-y-3">
+          @for (c of recentCustomers(); track c.email) {
+            <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-900/60 border border-slate-800 text-xs">
+              <div>
+                <p class="font-bold text-white">{{ c.name }}</p>
+                <p class="text-slate-400">{{ c.email }} • {{ c.city }}</p>
+              </div>
+              <span class="font-mono font-bold text-emerald-400">${{ c.total | number:'1.2-2' }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  } @else if (activeTab() === 'products') {
+    <app-admin-products></app-admin-products>
+  } @else if (activeTab() === 'orders') {
+    <app-admin-orders></app-admin-orders>
+  } @else if (activeTab() === 'inventory') {
+    <app-admin-inventory></app-admin-inventory>
+  } @else if (activeTab() === 'coupons') {
+    <app-admin-coupons></app-admin-coupons>
+  }
+</div>

@@ -1,0 +1,92 @@
+<div class="py-6 space-y-8 max-w-5xl mx-auto">
+  <div class="border-b border-slate-800 pb-4">
+    <h1 class="text-3xl font-black text-white font-display">Finalizar Compra</h1>
+    <p class="text-xs text-slate-400">Entrega de equipos informáticos y procesamiento de pago seguro con Stripe</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-2 space-y-6">
+      <!-- 1. Dirección de Entrega (HU-22) -->
+      <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
+        <h2 class="text-sm font-bold text-white uppercase font-mono flex items-center gap-2">
+          <span class="w-6 h-6 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800 flex items-center justify-center text-xs">1</span>
+          Dirección de Entrega
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div><label class="text-slate-400">Nombre Completo</label><input [(ngModel)]="address.fullName" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white mt-1" /></div>
+          <div><label class="text-slate-400">Teléfono</label><input [(ngModel)]="address.phone" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white mt-1" /></div>
+          <div class="sm:col-span-2"><label class="text-slate-400">Dirección Residencial / Oficina</label><input [(ngModel)]="address.addressLine" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white mt-1" /></div>
+          <div><label class="text-slate-400">Ciudad</label><input [(ngModel)]="address.city" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white mt-1" /></div>
+          <div><label class="text-slate-400">Código Postal</label><input [(ngModel)]="address.postalCode" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white mt-1" /></div>
+        </div>
+      </div>
+
+      <!-- 2. Método de Envío (HU-23) -->
+      <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
+        <h2 class="text-sm font-bold text-white uppercase font-mono flex items-center gap-2">
+          <span class="w-6 h-6 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800 flex items-center justify-center text-xs">2</span>
+          Método de Envío
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div (click)="shippingMethod.set('standard')" [class.border-cyan-500]="shippingMethod() === 'standard'" class="p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 cursor-pointer flex justify-between items-center">
+            <div><p class="font-bold text-white">Envío Estándar (3-5 días)</p><p class="text-slate-400 text-[11px]">Seguro contra pérdidas incluido</p></div>
+            <span class="text-emerald-400 font-mono font-bold">GRATIS</span>
+          </div>
+          <div (click)="shippingMethod.set('express')" [class.border-cyan-500]="shippingMethod() === 'express'" class="p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 cursor-pointer flex justify-between items-center">
+            <div><p class="font-bold text-white">Express Prioritario (24h)</p><p class="text-slate-400 text-[11px]">Embalaje antiestático reforzado</p></div>
+            <span class="text-cyan-400 font-mono font-bold">$25.00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Método de Pago & Stripe (HU-24) -->
+      <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
+        <h2 class="text-sm font-bold text-white uppercase font-mono flex items-center gap-2">
+          <span class="w-6 h-6 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800 flex items-center justify-center text-xs">3</span>
+          Método de Pago Seguro
+        </h2>
+        <div class="flex gap-3 text-xs mb-4">
+          <button (click)="paymentMethod.set('stripe')" [class.bg-cyan-950]="paymentMethod() === 'stripe'" [class.border-cyan-500]="paymentMethod() === 'stripe'" class="flex-1 p-3 rounded-2xl bg-slate-900 border border-slate-800 text-white font-semibold flex items-center justify-center gap-2 cursor-pointer">
+            <mat-icon class="text-cyan-400">credit_card</mat-icon> Tarjeta (Stripe)
+          </button>
+          <button (click)="paymentMethod.set('transfer')" [class.bg-cyan-950]="paymentMethod() === 'transfer'" [class.border-cyan-500]="paymentMethod() === 'transfer'" class="flex-1 p-3 rounded-2xl bg-slate-900 border border-slate-800 text-white font-semibold flex items-center justify-center gap-2 cursor-pointer">
+            <mat-icon class="text-indigo-400">account_balance</mat-icon> Transferencia Bancaria
+          </button>
+        </div>
+
+        @if (paymentMethod() === 'stripe') {
+          <div class="p-4 rounded-2xl bg-slate-950/70 border border-cyan-900/50 space-y-3 text-xs">
+            <div class="flex items-center justify-between">
+              <span class="text-slate-300 font-mono flex items-center gap-1.5"><mat-icon class="!text-16px text-emerald-400">lock</mat-icon> Stripe Elements</span>
+              <button (click)="useStripeTestCard()" class="text-[11px] text-cyan-400 hover:underline">Autocompletar Tarjeta de Prueba</button>
+            </div>
+            <div><label class="text-slate-400">Número de Tarjeta</label><input [(ngModel)]="cardDetails.cardNumber" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white font-mono mt-1" /></div>
+            <div class="grid grid-cols-3 gap-2">
+              <div class="col-span-2"><label class="text-slate-400">Titular</label><input [(ngModel)]="cardDetails.cardHolder" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white mt-1" /></div>
+              <div><label class="text-slate-400">Exp / CVV</label><input [(ngModel)]="cardDetails.expiry" placeholder="MM/YY" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white font-mono mt-1" /></div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- 4. Resumen y Confirmación (HU-25, HU-26) -->
+    <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-6 h-fit">
+      <h2 class="text-base font-bold text-white uppercase font-mono">Resumen del Pedido</h2>
+      <div class="space-y-3 text-xs border-b border-slate-800 pb-4">
+        @for (item of cartService.items(); track item.product.id) {
+          <div class="flex justify-between items-center"><span class="truncate max-w-[170px] text-slate-300">{{ item.product.name }} (x{{ item.quantity }})</span><span class="font-mono text-white">${{ (item.product.price * item.quantity) | number:'1.2-2' }}</span></div>
+        }
+      </div>
+      <div class="space-y-2 text-xs">
+        <div class="flex justify-between text-slate-400"><span>Subtotal</span><span class="font-mono">${{ cartService.subtotal() | number:'1.2-2' }}</span></div>
+        <div class="flex justify-between text-slate-400"><span>Envío</span><span class="font-mono">{{ cartService.shipping() === 0 ? 'Gratis' : '$' + cartService.shipping() }}</span></div>
+        <div class="flex justify-between text-lg font-bold text-white pt-2 border-t border-slate-800"><span>Total</span><span class="text-cyan-400 font-mono">${{ cartService.total() | number:'1.2-2' }}</span></div>
+      </div>
+      <button (click)="submitOrder()" [disabled]="isProcessing() || cartService.items().length === 0" class="w-full py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-sm shadow-xl shadow-cyan-500/25 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50">
+        <mat-icon>{{ isProcessing() ? 'hourglass_top' : 'verified' }}</mat-icon>
+        <span>{{ isProcessing() ? 'Procesando en Stripe...' : 'Confirmar y Pagar Pedido' }}</span>
+      </button>
+    </div>
+  </div>
+</div>

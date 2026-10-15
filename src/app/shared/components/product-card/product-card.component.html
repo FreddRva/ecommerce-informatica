@@ -1,0 +1,78 @@
+<div class="glass-card rounded-2xl overflow-hidden flex flex-col h-full group relative border border-slate-800/80 hover:border-cyan-500/50 transition-all duration-300">
+  <!-- Image Container -->
+  <a [routerLink]="['/producto', product().id]" class="relative block overflow-hidden aspect-[4/3] bg-slate-900/90">
+    <img 
+      [src]="product().images[0]" 
+      [alt]="product().name"
+      class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+      loading="lazy"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60"></div>
+
+    <!-- Discount Badge -->
+    @if (discountPercent) {
+      <span class="absolute top-3 left-3 bg-gradient-to-r from-rose-600 to-pink-600 text-white text-[11px] font-bold px-2 py-0.5 rounded-full shadow-lg">
+        -{{ discountPercent }}% OFF
+      </span>
+    }
+
+    <!-- Stock Status Badge (HU-36, HU-37) -->
+    <div class="absolute top-3 right-3">
+      @if (isOutOfStock) {
+        <span class="bg-red-500/20 text-red-400 border border-red-500/40 text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase">
+          Agotado
+        </span>
+      } @else if (isLowStock) {
+        <span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-semibold px-2 py-0.5 rounded-full animate-pulse flex items-center gap-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> ¡Últimas {{ product().stock }} un!
+        </span>
+      } @else {
+        <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-medium px-2 py-0.5 rounded-full">
+          Disponible
+        </span>
+      }
+    </div>
+  </a>
+
+  <!-- Content -->
+  <div class="p-5 flex flex-col flex-grow justify-between">
+    <div>
+      <div class="flex items-center justify-between gap-2 mb-1.5">
+        <span class="text-[11px] font-mono tracking-wider uppercase text-cyan-400">{{ product().brand }}</span>
+        <app-star-rating [value]="product().rating" [count]="product().reviewsCount"></app-star-rating>
+      </div>
+
+      <h3 class="font-semibold text-slate-100 text-base leading-snug line-clamp-2 group-hover:text-cyan-300 transition-colors">
+        <a [routerLink]="['/producto', product().id]">{{ product().name }}</a>
+      </h3>
+
+      <p class="text-xs text-slate-400 line-clamp-2 mt-2 leading-relaxed font-normal">
+        {{ product().description }}
+      </p>
+    </div>
+
+    <!-- Pricing & Action -->
+    <div class="pt-4 mt-4 border-t border-slate-800/80 flex items-center justify-between">
+      <div>
+        <div class="text-xl font-bold font-mono text-white tracking-tight">
+          ${{ product().price | number:'1.2-2' }}
+        </div>
+        @if (product().originalPrice && product().originalPrice! > product().price) {
+          <div class="text-xs text-slate-500 line-through font-mono">
+            ${{ product().originalPrice | number:'1.2-2' }}
+          </div>
+        }
+      </div>
+
+      <button 
+        type="button"
+        (click)="addToCart($event)"
+        [disabled]="isOutOfStock"
+        class="h-10 px-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-medium text-xs flex items-center gap-1.5 shadow-md hover:shadow-cyan-500/25 transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+      >
+        <mat-icon class="!text-[18px] !w-[18px] !h-[18px]">shopping_cart</mat-icon>
+        <span>Agregar</span>
+      </button>
+    </div>
+  </div>
+</div>
